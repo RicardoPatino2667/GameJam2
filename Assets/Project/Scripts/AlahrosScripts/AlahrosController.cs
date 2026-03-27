@@ -51,10 +51,10 @@ public class AlahrosController : MonoBehaviour
         {
             transform.localScale = new Vector3(-Mathf.Abs(originalScale.x), originalScale.y, originalScale.z);
         }
-        //if (!isAttacking)
-        //{
+        if (!isAttacking)
+        {
             transform.Translate(movement * speed * Time.deltaTime);
-        //}
+        }
         bool isAiming = characterInput.actions["Aim"].IsPressed();
         characterAnimator.SetBool("isAimingBat", isAiming && currentWeapon == WeaponType.Bat);
         characterAnimator.SetBool("isAimingShotgun", isAiming && currentWeapon == WeaponType.Shotgun);
@@ -73,10 +73,10 @@ public class AlahrosController : MonoBehaviour
         if (shootInput > 0.1 && !wasShooting)
         {
             isAttacking = true;
-
             switch (currentWeapon)
             {
                 case WeaponType.Bat:
+                    Invoke("RestoreAttack", 0.7f);
 
                     if (isAiming)
                         characterAnimator.SetTrigger("shootBat"); // maybe throw?
@@ -87,12 +87,17 @@ public class AlahrosController : MonoBehaviour
 
                 case WeaponType.Shotgun:
 
+                    Invoke("RestoreAttack", 0.7f);
+
                     if (isAiming)
                         characterAnimator.SetTrigger("shootShotgun");
                     else
                         characterAnimator.SetTrigger("hitShotgun"); // or block melee
 
                     break;
+
+            
+
             }
         }
         //else
@@ -118,5 +123,10 @@ public class AlahrosController : MonoBehaviour
             isGrounded = true;
             characterAnimator.SetBool("isJumping", false);
         }
+    }
+
+    private void RestoreAttack()
+    {
+        isAttacking = false;
     }
 }
