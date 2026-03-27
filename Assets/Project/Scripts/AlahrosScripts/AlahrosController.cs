@@ -41,7 +41,7 @@ public class AlahrosController : MonoBehaviour
     {
         moveInput = characterInput.actions["Move"].ReadValue<Vector2>();
         Vector2 movement = new Vector2(moveInput.x, moveInput.y);
-        Debug.Log("moveInput.X" + moveInput.x);
+        //Debug.Log("moveInput.X" + moveInput.x);
         characterAnimator.SetFloat("moveX", moveInput.x);
         if (moveInput.x > 0)
         {
@@ -56,27 +56,48 @@ public class AlahrosController : MonoBehaviour
             transform.Translate(movement * speed * Time.deltaTime);
         //}
         bool isAiming = characterInput.actions["Aim"].IsPressed();
-        characterAnimator.SetBool("isAiming", isAiming);
+        characterAnimator.SetBool("isAimingBat", isAiming && currentWeapon == WeaponType.Bat);
+        characterAnimator.SetBool("isAimingShotgun", isAiming && currentWeapon == WeaponType.Shotgun);
         Debug.Log("Aiming: " + characterInput.actions["Aim"].IsPressed());
         shootInput = characterInput.actions["Attack"].ReadValue<float>();
+
+        if (Keyboard.current.qKey.wasPressedThisFrame)
+        {
+            currentWeapon = currentWeapon == WeaponType.Bat
+                ? WeaponType.Shotgun
+                : WeaponType.Bat;
+
+            Debug.Log("Switched to: " + currentWeapon);
+        }
 
         if (shootInput > 0.1 && !wasShooting)
         {
             isAttacking = true;
-            //characterRigidbody2D.linearVelocity = Vector2.zero;
-            if (isAiming) 
+
+            switch (currentWeapon)
             {
-                characterAnimator.SetTrigger("shootBat");
+                case WeaponType.Bat:
+
+                    if (isAiming)
+                        characterAnimator.SetTrigger("shootBat"); // maybe throw?
+                    else
+                        characterAnimator.SetTrigger("hitBat");
+
+                    break;
+
+                case WeaponType.Shotgun:
+
+                    if (isAiming)
+                        characterAnimator.SetTrigger("shootShotgun");
+                    else
+                        characterAnimator.SetTrigger("hitShotgun"); // or block melee
+
+                    break;
             }
-            else
-            {
-                characterAnimator.SetTrigger("hitBat");
-            }
-                        
         }
         //else
         //{
-            //characterRigidbody2D.linearVelocity = new Vector2(0, characterRigidbody2D.linearVelocity.x);
+        //characterRigidbody2D.linearVelocity = new Vector2(0, characterRigidbody2D.linearVelocity.x);
         //}
         wasShooting = shootInput > 0.1;
 
