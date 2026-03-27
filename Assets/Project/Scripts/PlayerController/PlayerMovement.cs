@@ -24,6 +24,7 @@ public class PlayerMovement : MonoBehaviour
     public void HandleMovement()
     {
         _horizontalInput = Input.GetAxisRaw("Horizontal"); // A = -1 | D = 1
+        
 
         _rb.linearVelocity = new Vector2(_horizontalInput * moveSpeed, _rb.linearVelocity.y);
 
