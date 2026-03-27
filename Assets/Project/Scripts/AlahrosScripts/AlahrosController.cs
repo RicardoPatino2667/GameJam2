@@ -1,8 +1,5 @@
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
 
 public class AlahrosController : MonoBehaviour
 {
@@ -10,23 +7,33 @@ public class AlahrosController : MonoBehaviour
     Rigidbody2D characterRigidbody2D;
     Animator characterAnimator;
     Vector2 moveInput;
+
+    [Header("Movimiento")]
     public float speed = 1.0f;
     public float jumpForce = 10.0f;
-    [SerializeField] float shootInput, jumpInput, aimInput;
+
+    [Header("Estado")]
+    [SerializeField] float shootInput;
     public bool wasShooting, isAttacking, isJumping;
     public bool isGrounded = true;
 
-    public enum WeaponType
-    {
-        Bat,
-        Shotgun
-    }
-
+    [Header("Arma Actual")]
+    public enum WeaponType { Bat, Shotgun }
     public WeaponType currentWeapon = WeaponType.Bat;
 
+    [Header("Bate - Disparo de Clavos")]
+    public GameObject clavoPrefab;
+    public Transform puntoDisparo;
+    public float velocidadClavo = 12f;
 
-    //public bool shootInput;
+    [Header("Escopeta - Ataque Melee")]
+    public Transform puntoAtaqueMelee;
+    public float radioAtaqueMelee = 1.5f;
+    public int dañoEscopetaMelee = 25;
+    public LayerMask capaEnemigos;
+
     Vector3 originalScale;
+
     void Start()
     {
         characterRigidbody2D = GetComponent<Rigidbody2D>();
@@ -36,52 +43,134 @@ public class AlahrosController : MonoBehaviour
         isGrounded = true;
     }
 
-    // Update is called once per frame
     void Update()
     {
+        Mover();
+        CambiarArma();
+        Atacar();
+        Saltar();
+    }
+
+    void Mover()
+    {
         moveInput = characterInput.actions["Move"].ReadValue<Vector2>();
-        Vector2 movement = new Vector2(moveInput.x, moveInput.y);
-        //Debug.Log("moveInput.X" + moveInput.x);
         characterAnimator.SetFloat("moveX", moveInput.x);
+
         if (moveInput.x > 0)
-        {
             transform.localScale = new Vector3(Mathf.Abs(originalScale.x), originalScale.y, originalScale.z);
-        }
         else if (moveInput.x < 0)
-        {
             transform.localScale = new Vector3(-Mathf.Abs(originalScale.x), originalScale.y, originalScale.z);
+
+        transform.Translate(new Vector2(moveInput.x, moveInput.y) * speed * Time.deltaTime);
+    }
+
+    void CambiarArma()
+    {
+        // Presiona Q para cambiar entre Bate y Escopeta
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            currentWeapon = (currentWeapon == WeaponType.Bat) ? WeaponType.Shotgun : WeaponType.Bat;
+            Debug.Log("Arma equipada: " + currentWeapon);
         }
-        //if (!isAttacking)
-        //{
-            transform.Translate(movement * speed * Time.deltaTime);
-        //}
+    }
+
+    void Atacar()
+    {
         bool isAiming = characterInput.actions["Aim"].IsPressed();
         characterAnimator.SetBool("isAiming", isAiming);
-        Debug.Log("Aiming: " + characterInput.actions["Aim"].IsPressed());
+
         shootInput = characterInput.actions["Attack"].ReadValue<float>();
 
-        if (shootInput > 0.1 && !wasShooting)
+        if (shootInput > 0.1f && !wasShooting)
         {
             isAttacking = true;
-            //characterRigidbody2D.linearVelocity = Vector2.zero;
-            if (isAiming) 
+
+            if (currentWeapon == WeaponType.Bat)
             {
-                characterAnimator.SetTrigger("shootBat");
+                if (isAiming)
+                {
+                    // BATE + APUNTAR → Dispara clavos ✓
+                    characterAnimator.SetTrigger("shootBat");
+                    DispararClavo();
+                }
+                else
+                {
+                    // BATE + MELEE → Sin daño
+                    characterAnimator.SetTrigger("hitBat");
+                    Debug.Log("Golpe de bate - sin daño");
+                }
             }
-            else
+            else if (currentWeapon == WeaponType.Shotgun)
             {
-                characterAnimator.SetTrigger("hitBat");
+                if (isAiming)
+                {
+                    // ESCOPETA + DISPARAR → Sin daño
+                    characterAnimator.SetTrigger("shootShotgun");
+                    Debug.Log("Disparo de escopeta - sin daño");
+                }
+                else
+                {
+                    // ESCOPETA + MELEE → Con daño ✓
+                    characterAnimator.SetTrigger("hitShotgun");
+                    AtacarMeleeEscopeta();
+                }
             }
-                        
         }
-        //else
-        //{
-            //characterRigidbody2D.linearVelocity = new Vector2(0, characterRigidbody2D.linearVelocity.x);
-        //}
-        wasShooting = shootInput > 0.1;
 
-        jumpInput = characterInput.actions["Jump"].ReadValue<float>();
+        wasShooting = shootInput > 0.1f;
+    }
 
+    void DispararClavo()
+    {
+        if (clavoPrefab == null || puntoDisparo == null)
+        {
+            Debug.LogError("Asigna clavoPrefab y puntoDisparo en el Inspector");
+            return;
+        }
+
+        float direccionX = Mathf.Sign(transform.localScale.x);
+        GameObject clavo = Instantiate(clavoPrefab, puntoDisparo.position, Quaternion.identity);
+        
+        Clavo clavoScript = clavo.GetComponent<Clavo>();
+        if (clavoScript != null)
+            clavoScript.Inicializar(new Vector2(direccionX, 0), velocidadClavo);
+        else
+            Debug.LogError("El prefab del Clavo no tiene el script Clavo.cs");
+    }
+
+    void AtacarMeleeEscopeta()
+    {
+        if (puntoAtaqueMelee == null)
+        {
+            Debug.LogError("Asigna puntoAtaqueMelee en el Inspector");
+            return;
+        }
+
+        Collider2D[] enemigos = Physics2D.OverlapCircleAll(
+            puntoAtaqueMelee.position,
+            radioAtaqueMelee,
+            capaEnemigos
+        );
+
+        if (enemigos.Length == 0)
+        {
+            Debug.Log("Escopeta melee - no hay enemigos en rango");
+            return;
+        }
+
+        foreach (Collider2D col in enemigos)
+        {
+            Zombie zombie = col.GetComponent<Zombie>();
+            if (zombie != null)
+            {
+                zombie.RecibirDaño(dañoEscopetaMelee);
+                Debug.Log("Escopeta melee golpeó: " + col.name);
+            }
+        }
+    }
+
+    void Saltar()
+    {
         if (characterInput.actions["Jump"].WasPressedThisFrame() && isGrounded)
         {
             characterRigidbody2D.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
@@ -96,6 +185,21 @@ public class AlahrosController : MonoBehaviour
         {
             isGrounded = true;
             characterAnimator.SetBool("isJumping", false);
+        }
+    }
+
+    // Visualizar radio de ataque en el Editor
+    void OnDrawGizmosSelected()
+    {
+        if (puntoAtaqueMelee != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(puntoAtaqueMelee.position, radioAtaqueMelee);
+        }
+        if (puntoDisparo != null)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawSphere(puntoDisparo.position, 0.1f);
         }
     }
 }
