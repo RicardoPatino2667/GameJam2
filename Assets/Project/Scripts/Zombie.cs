@@ -9,9 +9,12 @@ public class Zombie : MonoBehaviour
     Transform player;
     Rigidbody2D rb;
     float siguienteAtaque;
+    Animator zombieAnimator;
+
 
     void Start()
     {
+        zombieAnimator = GetComponent<Animator>();
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
             player = playerObj.transform;
@@ -50,18 +53,18 @@ public class Zombie : MonoBehaviour
 
     void Atacar()
     {
-        // Detener al zombie cuando ataca
         rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
 
         if (Time.time >= siguienteAtaque)
         {
             siguienteAtaque = Time.time + 1f;
 
+            // ← AGREGAR ESTA LÍNEA
+            if (zombieAnimator != null) zombieAnimator.SetTrigger("attack");
+
             GameManager gm = FindFirstObjectByType<GameManager>();
             if (gm != null)
                 gm.PlayerRecibeDaño(1);
-            else
-                Debug.LogError("No se encuentra el GameManager");
         }
     }
 
