@@ -1,34 +1,37 @@
 fileFormatVersion: 2
-guid: e640a142c642fed469285d799c3d8f6c
+guid: 752b07890b5c2d540bd3976b00e7470e
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1200488133192286418
-    second: CharacterHit_0
+      213: 7963095961066983322
+    second: CharacterJumping_0
   - first:
-      213: 6618015056330382713
-    second: CharacterHit_1
+      213: 3180004226887196440
+    second: CharacterJumping_1
   - first:
-      213: 6177938263041636099
-    second: CharacterHit_2
+      213: -4987789122681032145
+    second: CharacterJumping_2
   - first:
-      213: -6894648366695821576
-    second: CharacterHit_3
+      213: -5655551394666334254
+    second: CharacterJumping_3
   - first:
-      213: 2843328308035883491
-    second: CharacterHit_4
+      213: -8754894722051678916
+    second: CharacterJumping_4
   - first:
-      213: 5670476391486054723
-    second: CharacterHit_5
+      213: -858522397690792063
+    second: CharacterJumping_5
   - first:
-      213: 1468831815145018940
-    second: CharacterHit_6
+      213: -1606768864510779302
+    second: CharacterJumping_6
   - first:
-      213: -3590419634847328511
-    second: CharacterHit_7
+      213: 2638358364900667731
+    second: CharacterJumping_7
   - first:
-      213: -5966453204293920472
-    second: CharacterHit_8
+      213: 5874611497616470553
+    second: CharacterJumping_8
+  - first:
+      213: 7589927482175376181
+    second: CharacterJumping_9
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -176,7 +179,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: CharacterHit_0
+      name: CharacterJumping_0
       rect:
         serializedVersion: 2
         x: 0
@@ -191,14 +194,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e2f70004762075fe0800000000000000
-      internalID: -1200488133192286418
+      spriteID: a9fceb71699928e60800000000000000
+      internalID: 7963095961066983322
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: CharacterHit_1
+      name: CharacterJumping_1
       rect:
         serializedVersion: 2
         x: 64
@@ -213,14 +216,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 97d52c641a9e7db50800000000000000
-      internalID: 6618015056330382713
+      spriteID: 81f1ad7fef4a12c20800000000000000
+      internalID: 3180004226887196440
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: CharacterHit_2
+      name: CharacterJumping_2
       rect:
         serializedVersion: 2
         x: 128
@@ -235,14 +238,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 307f3ec3e127cb550800000000000000
-      internalID: 6177938263041636099
+      spriteID: f223a082830d7cab0800000000000000
+      internalID: -4987789122681032145
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: CharacterHit_3
+      name: CharacterJumping_3
       rect:
         serializedVersion: 2
         x: 192
@@ -257,14 +260,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8fe4ed307d94150a0800000000000000
-      internalID: -6894648366695821576
+      spriteID: 2d7b2ff88f17381b0800000000000000
+      internalID: -5655551394666334254
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: CharacterHit_4
+      name: CharacterJumping_4
       rect:
         serializedVersion: 2
         x: 256
@@ -279,14 +282,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3e19a441808857720800000000000000
-      internalID: 2843328308035883491
+      spriteID: c3dda2eb2ad508680800000000000000
+      internalID: -8754894722051678916
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: CharacterHit_5
+      name: CharacterJumping_5
       rect:
         serializedVersion: 2
         x: 320
@@ -301,14 +304,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 341e3cd0c3491be40800000000000000
-      internalID: 5670476391486054723
+      spriteID: 1877ced8d6ae514f0800000000000000
+      internalID: -858522397690792063
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: CharacterHit_6
+      name: CharacterJumping_6
       rect:
         serializedVersion: 2
         x: 384
@@ -323,8 +326,74 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c36d280f0c6526410800000000000000
-      internalID: 1468831815145018940
+      spriteID: a506da21b3c93b9e0800000000000000
+      internalID: -1606768864510779302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CharacterJumping_7
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 351b51a44f45d9420800000000000000
+      internalID: 2638358364900667731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CharacterJumping_8
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 912fad43800d68150800000000000000
+      internalID: 5874611497616470553
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CharacterJumping_9
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53bc906f4d6d45960800000000000000
+      internalID: 7589927482175376181
       vertices: []
       indices: 
       edges: []
@@ -333,7 +402,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 1c4996b5346738645848ac7176f62658
+    spriteID: abda3b371e20dac44aa68bb673a36eb4
     internalID: 0
     vertices: []
     indices: 
@@ -345,13 +414,16 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      CharacterHit_0: -1200488133192286418
-      CharacterHit_1: 6618015056330382713
-      CharacterHit_2: 6177938263041636099
-      CharacterHit_3: -6894648366695821576
-      CharacterHit_4: 2843328308035883491
-      CharacterHit_5: 5670476391486054723
-      CharacterHit_6: 1468831815145018940
+      CharacterJumping_0: 7963095961066983322
+      CharacterJumping_1: 3180004226887196440
+      CharacterJumping_2: -4987789122681032145
+      CharacterJumping_3: -5655551394666334254
+      CharacterJumping_4: -8754894722051678916
+      CharacterJumping_5: -858522397690792063
+      CharacterJumping_6: -1606768864510779302
+      CharacterJumping_7: 2638358364900667731
+      CharacterJumping_8: 5874611497616470553
+      CharacterJumping_9: 7589927482175376181
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
