@@ -18,6 +18,11 @@ public class MenuManager : MonoBehaviour
         SceneManager.LoadScene("WhoAreUs"); // Escena de "Who are us"
     }
 
+    public void OpenMainMenu()
+    {
+        SceneManager.LoadScene("MainMenu"); // Escena de "Who are us"
+    }
+
     public void QuitGame()
     {
         Debug.Log("Saliendo...");
