@@ -6,13 +6,13 @@ public class SpawnManager : MonoBehaviour
     public GameObject zombiePrefab;
 
     [Header("Puntos de Spawn")]
-    public Transform[] puntosSpawn; // Arrastra aquÌ los puntos en el Inspector
+    public Transform[] puntosSpawn; // Arrastra aqu√≠ los puntos en el Inspector
 
-    [Header("ConfiguraciÛn")]
+    [Header("Configuraci√≥n")]
     public float tiempoEntreSpawns = 3f;  // Segundos entre cada spawn
-    public int maxZombiesEnEscena = 10;   // LÌmite de zombies simult·neos
-    public float tiempoEntreSpawnsMin = 2f; // Tiempo mÌnimo aleatorio
-    public float tiempoEntreSpawnsMax = 5f; // Tiempo m·ximo aleatorio
+    public int maxZombiesEnEscena = 10;   // L√≠mite de zombies simult√°neos
+    public float tiempoEntreSpawnsMin = 2f; // Tiempo m√≠nimo aleatorio
+    public float tiempoEntreSpawnsMax = 5f; // Tiempo m√°ximo aleatorio
 
     private float temporizador;
     private int zombiesActuales;
