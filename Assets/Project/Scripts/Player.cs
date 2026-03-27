@@ -1,58 +1,102 @@
 using UnityEngine;
-using UnityEngine.InputSystem;  // Importante!
+using UnityEngine.InputSystem;
 
-public class Player : MonoBehaviour
+public class PlayerSimple : MonoBehaviour
 {
     public float velocidad = 5f;
+    public float fuerzaSalto = 8f;
     public Transform puntoAtaque;
-    public float rangoAtaque = 1.5f;
-    
-    Rigidbody2D rb;
-    Vector2 movimiento;
-    
-    void Start()
+    public float rangoAtaque = 1.2f;
+    public float tiempoEntreAtaques = 0.5f;
+
+    private Rigidbody2D rb;
+    private Vector2 movimientoInput;
+    private float siguienteAtaque;
+    private PlayerInput playerInput;
+    private InputAction moveAction;
+    private InputAction jumpAction;
+    private InputAction attackAction;
+
+    void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        if (rb == null)
+            Debug.LogError("Falta Rigidbody2D en " + gameObject.name);
+
+        playerInput = GetComponent<PlayerInput>();
+        if (playerInput == null)
+        {
+            Debug.LogError("Falta PlayerInput en " + gameObject.name);
+            return;
+        }
+
+        moveAction   = playerInput.actions["Move"];
+        jumpAction   = playerInput.actions["Jump"];
+        attackAction = playerInput.actions["Attack"];
     }
-    
+
+    void OnEnable()
+    {
+        if (jumpAction != null)   jumpAction.performed   += OnJump;
+        if (attackAction != null) attackAction.performed += OnAttack;
+    }
+
+    void OnDisable()
+    {
+        if (jumpAction != null)   jumpAction.performed   -= OnJump;
+        if (attackAction != null) attackAction.performed -= OnAttack;
+        if (rb != null)           rb.linearVelocity = Vector2.zero;
+    }
+
     void Update()
     {
-        // Movimiento con el nuevo Input System
-        float x = Keyboard.current.aKey.isPressed ? -1 : (Keyboard.current.dKey.isPressed ? 1 : 0);
-        float y = Keyboard.current.sKey.isPressed ? -1 : (Keyboard.current.wKey.isPressed ? 1 : 0);
-        movimiento = new Vector2(x, y).normalized;
-        
-        // Rotar hacia el mouse con el nuevo Input System
-        Vector3 mouse = Mouse.current.position.ReadValue();
-        mouse = Camera.main.ScreenToWorldPoint(mouse);
-        Vector2 direccion = new Vector2(mouse.x - transform.position.x, mouse.y - transform.position.y);
-        float angulo = Mathf.Atan2(direccion.y, direccion.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.AngleAxis(angulo, Vector3.forward);
-        
-        // Atacar
-        if (Mouse.current.leftButton.wasPressedThisFrame) Atacar(2);
-        if (Mouse.current.rightButton.wasPressedThisFrame) Atacar(1);
+        if (moveAction == null) return;
+
+        Vector2 move = moveAction.ReadValue<Vector2>();
+        movimientoInput = move;
+
+        rb.linearVelocity = new Vector2(move.x * velocidad, rb.linearVelocity.y);
+
+        if (move.x != 0)
+            transform.localScale = new Vector3(Mathf.Sign(move.x), 1, 1);
     }
-    
-    void FixedUpdate()
+
+    void OnJump(InputAction.CallbackContext context)
     {
-        rb.linearVelocity = movimiento * velocidad;
+        if (context.performed)
+        {
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, fuerzaSalto);
+        }
     }
-    
+
+    void OnAttack(InputAction.CallbackContext context)
+    {
+        if (context.performed && Time.time >= siguienteAtaque)
+        {
+            siguienteAtaque = Time.time + tiempoEntreAtaques;
+            Atacar(2);
+        }
+    }
+
     void Atacar(int daño)
     {
-        Collider2D[] zombies = Physics2D.OverlapCircleAll(puntoAtaque.position, rangoAtaque);
-        
-        foreach (Collider2D z in zombies)
+        if (puntoAtaque == null)
         {
-            if (z.CompareTag("Zombie"))
+            Debug.LogWarning("puntoAtaque no asignado en el Inspector");
+            return;
+        }
+
+        Collider2D[] enemigos = Physics2D.OverlapCircleAll(puntoAtaque.position, rangoAtaque);
+        foreach (Collider2D e in enemigos)
+        {
+            if (e.CompareTag("Zombie"))
             {
-                z.GetComponent<Zombie>().RecibirDaño(daño);
-                Debug.Log("Atacó con daño: " + daño);
+                Zombie z = e.GetComponent<Zombie>();
+                if (z != null) z.RecibirDaño(daño);
             }
         }
     }
-    
+
     void OnDrawGizmosSelected()
     {
         if (puntoAtaque != null)
