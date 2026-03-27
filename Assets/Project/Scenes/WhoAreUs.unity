@@ -213,7 +213,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "David Pati\xF1o"
+  m_text: "Ricardo Pati\xF1o"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 33136ccd91bcd5b4caeee0f8d583fd59, type: 2}
   m_sharedMaterial: {fileID: 1720743087445265569, guid: 33136ccd91bcd5b4caeee0f8d583fd59, type: 2}
