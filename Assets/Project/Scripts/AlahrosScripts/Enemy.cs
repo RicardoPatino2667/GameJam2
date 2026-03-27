@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EnemyScript : MonoBehaviour
+public class Enemy : MonoBehaviour
 {
     public float speed = 3.0f;
     private Rigidbody2D enemyRigidbody;
@@ -14,5 +14,10 @@ public class EnemyScript : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void TakeDamage(int damage)
+    {
+        Debug.Log("Enemy took damage: " + damage);
     }
 }

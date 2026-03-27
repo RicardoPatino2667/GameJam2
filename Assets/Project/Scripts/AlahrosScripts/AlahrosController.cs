@@ -1,4 +1,5 @@
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,9 +12,18 @@ public class AlahrosController : MonoBehaviour
     Vector2 moveInput;
     public float speed = 1.0f;
     public float jumpForce = 10.0f;
-    [SerializeField] float shootInput, jumpInput;
-    public bool wasShooting;
+    [SerializeField] float shootInput, jumpInput, aimInput;
+    public bool wasShooting, isAttacking, isJumping;
     public bool isGrounded = true;
+
+    public enum WeaponType
+    {
+        Bat,
+        Shotgun
+    }
+
+    public WeaponType currentWeapon = WeaponType.Bat;
+
 
     //public bool shootInput;
     Vector3 originalScale;
@@ -41,14 +51,33 @@ public class AlahrosController : MonoBehaviour
         {
             transform.localScale = new Vector3(-Mathf.Abs(originalScale.x), originalScale.y, originalScale.z);
         }
-        transform.Translate(movement * speed * Time.deltaTime);
-
+        //if (!isAttacking)
+        //{
+            transform.Translate(movement * speed * Time.deltaTime);
+        //}
+        bool isAiming = characterInput.actions["Aim"].IsPressed();
+        characterAnimator.SetBool("isAiming", isAiming);
+        Debug.Log("Aiming: " + characterInput.actions["Aim"].IsPressed());
         shootInput = characterInput.actions["Attack"].ReadValue<float>();
 
         if (shootInput > 0.1 && !wasShooting)
         {
-            characterAnimator.SetTrigger("shootShotgun");
+            isAttacking = true;
+            //characterRigidbody2D.linearVelocity = Vector2.zero;
+            if (isAiming) 
+            {
+                characterAnimator.SetTrigger("shootBat");
+            }
+            else
+            {
+                characterAnimator.SetTrigger("hitBat");
+            }
+                        
         }
+        //else
+        //{
+            //characterRigidbody2D.linearVelocity = new Vector2(0, characterRigidbody2D.linearVelocity.x);
+        //}
         wasShooting = shootInput > 0.1;
 
         jumpInput = characterInput.actions["Jump"].ReadValue<float>();
@@ -57,6 +86,7 @@ public class AlahrosController : MonoBehaviour
         {
             characterRigidbody2D.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             isGrounded = false;
+            characterAnimator.SetBool("isJumping", true);
         }
     }
 
@@ -65,6 +95,7 @@ public class AlahrosController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = true;
+            characterAnimator.SetBool("isJumping", false);
         }
     }
 }
