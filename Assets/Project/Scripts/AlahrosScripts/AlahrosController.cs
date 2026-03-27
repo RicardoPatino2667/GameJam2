@@ -41,7 +41,7 @@ public class AlahrosController : MonoBehaviour
     {
         moveInput = characterInput.actions["Move"].ReadValue<Vector2>();
         Vector2 movement = new Vector2(moveInput.x, moveInput.y);
-        Debug.Log("moveInput.X" + moveInput.x);
+        //Debug.Log("moveInput.X" + moveInput.x);
         characterAnimator.SetFloat("moveX", moveInput.x);
         if (moveInput.x > 0)
         {

@@ -7,19 +7,8 @@ public class Zombie : MonoBehaviour
     public int vida = 54;
     public float velocidad = 2f;
     public float rangoAtaque = 1.5f;
-    public float tiempoEntreAtaques = 1f;
     
-    [Header("Detección")]
-    public Transform puntoSuelo;
-    public Transform puntoFrente;
-    public float distanciaSuelo = 0.2f;
-    public float distanciaFrente = 0.2f;
-    public LayerMask capaSuelo;
-    
-    [Header("Referencias")]
-    public Transform target; // Puedes asignar el jugador manualmente o se buscará automáticamente
-    
-    // Componentes
+    Transform player;
     Rigidbody2D rb;
     Animator animator;
     PlayerInput playerInput; // Referencia al PlayerInput del jugador
@@ -29,41 +18,38 @@ public class Zombie : MonoBehaviour
     bool haySueloAdelante;
     bool hayPared;
     float siguienteAtaque;
-    bool isAttacking;
     
     void Start()
     {
-        // Obtener componentes
-        rb = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
-        
-        // Buscar al jugador si no está asignado manualmente
-        if (target == null)
+        // Buscar al player por TAG
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
         {
-            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-            if (playerObj != null)
-            {
-                target = playerObj.transform;
-                playerInput = playerObj.GetComponent<PlayerInput>();
-            }
-            else
-            {
-                Debug.LogError("No hay player con tag 'Player'");
-            }
+            player = playerObj.transform;
+            Debug.Log("Zombie encontró al player");
         }
         else
         {
-            playerInput = target.GetComponent<PlayerInput>();
+            Debug.LogError("ERROR: No hay player con tag 'Player' en la escena");
+        }
+        
+        rb = GetComponent<Rigidbody2D>();
+        if (rb == null)
+        {
+            Debug.LogError("ERROR: El zombie no tiene Rigidbody2D");
         }
     }
-    
+
     void Update()
     {
-        if (target == null) return;
+        // Verificar que player existe antes de usarlo
+        if (player == null) 
+        {
+            Debug.LogWarning("Zombie no tiene referencia al player");
+            return;
+        }
         
-        DetectarEntorno();
-        
-        float distancia = Vector2.Distance(transform.position, target.position);
+        float distancia = Vector2.Distance(transform.position, player.position);
         
         if (distancia <= rangoAtaque)
             Atacar();
@@ -84,84 +70,46 @@ public class Zombie : MonoBehaviour
         haySueloAdelante = Physics2D.Raycast(puntoFrente.position, Vector2.down, distanciaSuelo, capaSuelo);
         hayPared = Physics2D.Raycast(puntoFrente.position, Vector2.right * transform.localScale.x, distanciaFrente, capaSuelo);
     }
-    
+
     void Perseguir()
     {
-        if (isAttacking) return;
+        Vector2 direccion = (player.position - transform.position).normalized;
+        rb.linearVelocity = direccion * velocidad;
         
-        float direccion = Mathf.Sign(target.position.x - transform.position.x);
-        
-        // Girar sprite
-        transform.localScale = new Vector3(direccion, 1, 1);
-        
-        // Evitar caerse o chocar
-        if (!haySueloAdelante || hayPared)
-        {
-            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
-            return;
-        }
-        
-        // Movimiento SOLO en X
-        rb.linearVelocity = new Vector2(direccion * velocidad, rb.linearVelocity.y);
+        // Rotar
+        float angulo = Mathf.Atan2(direccion.y, direccion.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.AngleAxis(angulo, Vector3.forward);
     }
-    
+
     void Atacar()
     {
-        // Detener movimiento al atacar
-        rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+        rb.linearVelocity = Vector2.zero;
         
-        if (Time.time >= siguienteAtaque && !isAttacking)
+        if (Time.time >= siguienteAtaque)
         {
-            siguienteAtaque = Time.time + tiempoEntreAtaques;
-            isAttacking = true;
+            siguienteAtaque = Time.time + 1f;
             
-            // Activar animación de ataque
-            if (animator != null)
+            // Buscar GameManager
+            GameManager gm = FindFirstObjectByType<GameManager>();
+            if (gm != null)
             {
-                animator.SetTrigger("Atacar");
+                gm.PlayerRecibeDaño(1);
+                Debug.Log("Zombie atacó");
             }
-            
-            // Aplicar daño al jugador
-            if (playerInput != null)
+            else
             {
-                // Buscar el GameManager o aplicar daño directamente al jugador
-                GameManager gm = FindFirstObjectByType<GameManager>();
-                if (gm != null) 
-                {
-                    gm.PlayerRecibeDaño(1);
-                }
-                else
-                {
-                    // Alternativa: aplicar daño directamente al componente de vida del jugador
-                    var playerHealth = target.GetComponent<PlayerHealth>();
-                    if (playerHealth != null)
-                        playerHealth.TakeDamage(1);
-                }
+                Debug.LogError("ERROR: No se encuentra el GameManager");
             }
-            
-            // Resetear estado de ataque después de un tiempo
-            Invoke(nameof(ResetAttack), 0.5f);
         }
     }
-    
-    void ResetAttack()
-    {
-        isAttacking = false;
-        if (animator != null)
-            animator.SetBool("Atacando", false);
-    }
-    
+
     public void RecibirDaño(int daño)
     {
         vida -= daño;
-        
-        // Activar animación de daño
-        if (animator != null)
-            animator.SetTrigger("RecibirDaño");
-        
+        Debug.Log("Zombie vida: " + vida);
         if (vida <= 0) Morir();
     }
-    
+
     void Morir()
     {
         // Activar animación de muerte
@@ -170,22 +118,8 @@ public class Zombie : MonoBehaviour
         
         // Notificar al GameManager
         GameManager gm = FindFirstObjectByType<GameManager>();
-        if (gm != null) 
-            gm.ZombieMuere();
+        if (gm != null) gm.ZombieMuere();
         
-        // Destruir después de un pequeño delay para que se vea la animación
-        Destroy(gameObject, 0.5f);
-    }
-    
-    void OnDrawGizmos()
-    {
-        if (puntoSuelo != null)
-            Gizmos.DrawLine(puntoSuelo.position, puntoSuelo.position + Vector3.down * distanciaSuelo);
-        
-        if (puntoFrente != null)
-        {
-            Gizmos.DrawLine(puntoFrente.position, puntoFrente.position + Vector3.down * distanciaSuelo);
-            Gizmos.DrawLine(puntoFrente.position, puntoFrente.position + Vector3.right * transform.localScale.x * distanciaFrente);
-        }
+        Destroy(gameObject);
     }
 }
