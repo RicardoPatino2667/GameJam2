@@ -87,7 +87,7 @@ public class GameManager : MonoBehaviour
     void GameOver()
     {
         juegoTerminado = true;
-        mensajeFinal = "GAME OVER - Presiona R para reiniciar";
+        mensajeFinal = "GAME OVER\nPresiona R para reiniciar";
         Time.timeScale = 0f;
         Debug.Log("GAME OVER");
     }
