@@ -51,17 +51,13 @@ public class GameManager : MonoBehaviour
 
     bool VerificarVictoriaRefugio()
     {
-        // Opción A: Buscar objeto con tag "Refugio" y ver si el jugador está cerca
+        
         GameObject refugio = GameObject.FindGameObjectWithTag(refugioTag);
         if (refugio != null)
         {
             float distancia = Vector2.Distance(jugador.position, refugio.transform.position);
             return distancia < radioVictoria;
         }
-
-        // Opción B: Usar coordenadas fijas
-        // float distancia = Vector2.Distance(jugador.position, coordenadasRefugio);
-        // return distancia < radioVictoria;
 
         return false;
     }
@@ -91,7 +87,7 @@ public class GameManager : MonoBehaviour
     void GameOver()
     {
         juegoTerminado = true;
-        mensajeFinal = "GAME OVER - Presiona R para reiniciar";
+        mensajeFinal = "GAME OVER\nPresiona R para reiniciar";
         Time.timeScale = 0f;
         Debug.Log("GAME OVER");
     }
@@ -100,7 +96,7 @@ public class GameManager : MonoBehaviour
     {
         if (juegoTerminado) return;
         juegoTerminado = true;
-        mensajeFinal = "VICTORIA - Has llegado al refugio! Presiona R para reiniciar";
+        mensajeFinal = "<color=yellow>VICTORIA</color>\nHas llegado al refugio!\nPresiona R para reiniciar";
         Time.timeScale = 0f;
         Debug.Log("VICTORIA");
     }
@@ -114,22 +110,31 @@ public class GameManager : MonoBehaviour
 
     void OnGUI()
     {
-        GUIStyle estilo = new GUIStyle();
-        estilo.fontSize = 20;
-        estilo.normal.textColor = Color.white;
-        GUI.Label(new Rect(10, 10, 200, 30), "Vidas: " + vidas);
-        // Mostrar solo el número de zombies muertos (sin total)
-        GUI.Label(new Rect(10, 40, 200, 30), "Zombies eliminados: " + zombiesMuertos);
+        // Estilo para los textos de información (vidas y zombies)
+        GUIStyle infoStyle = new GUIStyle();
+        infoStyle.fontSize = 40;               // Tamaño grande
+        infoStyle.alignment = TextAnchor.MiddleCenter;
+        infoStyle.normal.textColor = Color.red; // Color rojo
+        infoStyle.fontStyle = FontStyle.Bold;   // Negrita (opcional)
+        infoStyle.richText = true;
 
+        // Mostrar vidas
+        GUI.Label(new Rect(20, 20, 300, 80), "Vidas: " + vidas, infoStyle);
+
+        // Mostrar zombies eliminados
+        GUI.Label(new Rect(20, 100, 500, 80), "Zombies eliminados: " + zombiesMuertos, infoStyle);
+
+        // Mensaje final (sin cambios, pero también puedes agrandarlo)
         if (juegoTerminado)
         {
             GUIStyle estiloFinal = new GUIStyle();
-            estiloFinal.fontSize = 30;
+            estiloFinal.fontSize = 50;
             estiloFinal.alignment = TextAnchor.MiddleCenter;
             estiloFinal.normal.textColor = Color.red;
+            estiloFinal.fontStyle = FontStyle.Bold;
 
-            float ancho = 400;
-            float alto = 100;
+            float ancho = 600;
+            float alto = 120;
             float x = (Screen.width / 2) - (ancho / 2);
             float y = (Screen.height / 2) - (alto / 2);
 

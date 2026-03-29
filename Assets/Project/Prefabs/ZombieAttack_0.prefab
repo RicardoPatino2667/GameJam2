@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 4705941683161217895}
   m_Layer: 6
   m_Name: ZombieAttack_0
-  m_TagString: Untagged
+  m_TagString: Zombie
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -217,5 +217,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Zombie
   vida: 54
-  velocidad: 2
-  rangoAtaque: 1.5
+  velocidad: 1
+  rangoAtaque: 0.5
